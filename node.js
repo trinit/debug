@@ -5,7 +5,7 @@
 
 var tty = require('tty');
 var util = require('util');
-var iron-node = process.env._.lastIndexOf('iron-node') > -1;
+var iron_node = process.env._.lastIndexOf('iron-node') > -1;
 
 /**
  * This is the Node.js implementation of `debug()`.
@@ -24,7 +24,7 @@ exports.useColors = useColors;
  * Colors.
  */
 
-exports.colors = iron-node ? [
+exports.colors = iron_node ? [
   'lightseagreen',
   'forestgreen',
   'goldenrod',
@@ -89,7 +89,7 @@ exports.formatters.o = function(v) {
 
 
 function formatArgs() {
-  if(iron-node) {
+  if(iron_node) {
     var args = arguments;
     var useColors = this.useColors;
   
