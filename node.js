@@ -5,6 +5,7 @@
 
 var tty = require('tty');
 var util = require('util');
+var iron-node = process.env._.lastIndexOf('iron-node') > -1;
 
 /**
  * This is the Node.js implementation of `debug()`.
@@ -23,15 +24,14 @@ exports.useColors = useColors;
  * Colors.
  */
 
-/*exports.colors = [6, 2, 3, 4, 5, 1];*/
-exports.colors = [
+exports.colors = iron-node ? [
   'lightseagreen',
   'forestgreen',
   'goldenrod',
   'dodgerblue',
   'darkorchid',
   'crimson'
-];
+] : [6, 2, 3, 4, 5, 1];
 
 /**
  * The file descriptor to write the `debug()` calls to.
@@ -88,58 +88,59 @@ exports.formatters.o = function(v) {
  */
 
 
-/*function formatArgs() {
-  var args = arguments;
-  var useColors = this.useColors;
-  var name = this.namespace;
-
-  if (useColors) {
-    var c = this.color;
-
-    args[0] = '  \u001b[3' + c + ';1m' + name + ' '
-      + '\u001b[0m'
-      + args[0] + '\u001b[3' + c + 'm'
-      + ' +' + exports.humanize(this.diff) + '\u001b[0m';
-  } else {
-    args[0] = new Date().toUTCString()
-      + ' ' + name + ' ' + args[0];
-  }
-  return args;
-}*/
-
 function formatArgs() {
-  var args = arguments;
-  var useColors = this.useColors;
-
-  args[0] = (useColors ? '%c' : '')
-    + this.namespace
-    + (useColors ? ' %c' : ' ')
-    + args[0]
-    + (useColors ? '%c ' : ' ')
-    + '+' + exports.humanize(this.diff);
-
-  if (!useColors) return args;
-
-  var c = 'color: ' + this.color;
-  args = [args[0], c, 'color: inherit'].concat(Array.prototype.slice.call(args, 1));
-
-  // the final "%c" is somewhat tricky, because there could be other
-  // arguments passed either before or after the %c, so we need to
-  // figure out the correct index to insert the CSS into
-  var index = 0;
-  var lastC = 0;
-  args[0].replace(/%[a-z%]/g, function(match) {
-    if ('%%' === match) return;
-    index++;
-    if ('%c' === match) {
-      // we only are interested in the *last* %c
-      // (the user may have provided their own)
-      lastC = index;
+  if(iron-node) {
+    var args = arguments;
+    var useColors = this.useColors;
+  
+    args[0] = (useColors ? '%c' : '')
+      + this.namespace
+      + (useColors ? ' %c' : ' ')
+      + args[0]
+      + (useColors ? '%c ' : ' ')
+      + '+' + exports.humanize(this.diff);
+  
+    if (!useColors) return args;
+  
+    var c = 'color: ' + this.color;
+    args = [args[0], c, 'color: inherit'].concat(Array.prototype.slice.call(args, 1));
+  
+    // the final "%c" is somewhat tricky, because there could be other
+    // arguments passed either before or after the %c, so we need to
+    // figure out the correct index to insert the CSS into
+    var index = 0;
+    var lastC = 0;
+    args[0].replace(/%[a-z%]/g, function(match) {
+      if ('%%' === match) return;
+      index++;
+      if ('%c' === match) {
+        // we only are interested in the *last* %c
+        // (the user may have provided their own)
+        lastC = index;
+      }
+    });
+  
+    args.splice(lastC, 0, c);
+    return args;
+  }
+  else {
+    var args = arguments;
+    var useColors = this.useColors;
+    var name = this.namespace;
+  
+    if (useColors) {
+      var c = this.color;
+  
+      args[0] = '  \u001b[3' + c + ';1m' + name + ' '
+        + '\u001b[0m'
+        + args[0] + '\u001b[3' + c + 'm'
+        + ' +' + exports.humanize(this.diff) + '\u001b[0m';
+    } else {
+      args[0] = new Date().toUTCString()
+        + ' ' + name + ' ' + args[0];
     }
-  });
-
-  args.splice(lastC, 0, c);
-  return args;
+    return args;
+  }
 }
 
 /**
