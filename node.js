@@ -50,7 +50,8 @@ var stream = 1 === fd ? process.stdout :
  */
 
 function useColors() {
-  var debugColors = (process.env.DEBUG_COLORS || '').trim().toLowerCase();
+  return true;
+  /*var debugColors = (process.env.DEBUG_COLORS || '').trim().toLowerCase();
   if (0 === debugColors.length) {
     return tty.isatty(fd);
   } else {
@@ -58,7 +59,7 @@ function useColors() {
         && 'no' !== debugColors
         && 'false' !== debugColors
         && 'disabled' !== debugColors;
-  }
+  }*/
 }
 
 /**
