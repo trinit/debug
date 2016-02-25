@@ -5,7 +5,7 @@
 
 var tty = require('tty');
 var util = require('util');
-var iron_node = process.env._.lastIndexOf('iron-node') > -1;
+var iron_node = process.env._ && process.env._.lastIndexOf('iron-node') > -1;
 
 /**
  * This is the Node.js implementation of `debug()`.
